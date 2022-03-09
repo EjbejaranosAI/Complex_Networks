@@ -1,5 +1,8 @@
 # COMPLEX NETWORKS
 
+## Sources
+This repository and all the projects are inspired by the complex networks subject for the Master's degree in artificial intelligence at the URV
+You can see the theoretical part here [@edison.bejarano](https://grateful-mochi-7fe.notion.site/CN-Complex-Networks-1bcd009e349d4dbebc63c0a1bff84e78)
 
 ### Introduction
 This repository contain all the basic concepts about Complex networks, and it is split in 4 parts and 1 final project
@@ -19,6 +22,9 @@ Project is created with:
 * [Setup](#setup)
 
 
+
+
+
 ## Setup
 To run this project, install it locally using npm:
 
@@ -28,6 +34,3 @@ $ npm install
 $ npm start
 
 
-## Sources
-This repository and all the projects are inspired by the complex networks subject for the Master's degree in artificial intelligence at the URV
-and Android app tutorial by [@eericon](https://www.eericon.github.io/post/timer-android)
