@@ -1,1 +1,1 @@
-"""Structural descriptors of complex networks""""""Autors: Edison Bejarano - Eric walzter"""
+"""Structural descriptors of complex networks""""""Autors: Edison Bejarano - Eric walzter"""# Import own librariesfrom utils.utils import *# Import libraries# Variable configurationpath = './data/A1-networks.zip'output = './results'read_zip_files(path, output)

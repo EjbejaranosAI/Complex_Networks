@@ -2,7 +2,7 @@
 
 ## Sources
 This repository and all the projects are inspired by the complex networks subject for the Master's degree in artificial intelligence at the URV
-You can see the theoretical part here [@edison.bejarano](https://grateful-mochi-7fe.notion.site/CN-Complex-Networks-1bcd009e349d4dbebc63c0a1bff84e78)
+You can see the theoretical part here [@Complex_Networks_MAI](https://grateful-mochi-7fe.notion.site/CN-Complex-Networks-1bcd009e349d4dbebc63c0a1bff84e78)
 
 ### Introduction
 This repository contain all the basic concepts about Complex networks, and it is split in 4 parts and 1 final project

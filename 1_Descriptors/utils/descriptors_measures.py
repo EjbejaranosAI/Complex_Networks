@@ -1,1 +1,0 @@
-"""Structural descriptors of complex networks""""""Autors: Edison Bejarano - Eric walzter"""

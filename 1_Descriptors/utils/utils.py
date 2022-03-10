@@ -1,0 +1,1 @@
+"""Structural descriptors of complex networks"""import zipfile"""Autors: Edison Bejarano - Eric walzter"""# Function to extrac and read filesdef read_zip_files(path, output):    with zipfile.ZipFile(path, "r") as zip_ref:        zip_ref.extractall(path)
