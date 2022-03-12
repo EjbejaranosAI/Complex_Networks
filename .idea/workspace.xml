@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c97df242-0ad1-4ae8-9977-25e0b0847cb5" name="Changes" comment="Starting with the second task - Computing descriptors for the real networks -&gt; Airports in 50% of the task">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/1_Descriptors/results/Airports_Descriptors.csv" beforeDir="false" afterPath="$PROJECT_DIR$/1_Descriptors/results/Airports_Descriptors.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/1_Descriptors/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/1_Descriptors/utils/utils.py" afterDir="false" />
     </list>
@@ -28,6 +29,7 @@
       </GitPushTagMode>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -230,7 +232,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647086095852</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Starting with the second task - Computing descriptors for the real networks -&gt; Airports in 50% of the task">
+      <created>1647086671299</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1647086671299</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
