@@ -4,50 +4,68 @@
 ## Import Scripts 
 from utils.utils import extract_zip, read_net_files
 from utils.utils import extract_data_and_save
-from utils.airport_descriptors import AirportDescriptor
+from utils.utils import extract_airport_descriptors
+import gc 
 
+def main(ZIP_PATH:str, OUTPUT:str) -> None: 
+    """Main function to run the functions"""
+    ## Extract the zipfile, if the output dir exists it will skip
+    print("Extracting zip file...\n")
+    extract_zip(ZIP_PATH, OUTPUT)
 
-## Variable configuration
-## Path to the zip file 
-ZIP_PATH = './A1-networks.zip'
-## extracted directory
-OUTPUT = './A1-networks/'
+    ## Reading all the pajek files (.net files)
+    print("Loading Pajek files into memory...\n")
+    net_files = read_net_files(OUTPUT, verbosity=True)
 
-## Extract the zipfile, if the output dir exists it will skip
-extract_zip(ZIP_PATH, OUTPUT)
+    ##### Part A: Numerical Descriptors of Networks ######
+    ## extract the data and optionally save the CSV
+    print("Initializing Numerical Descriptor Extraction of Pajek files...\n")
+    df = extract_data_and_save(net_files, "new_Descriptors", save_csv=True)
+    ## verbosity 
+    print("Succesfully saved the Numerical Descriptors\n")
 
-## Reading all the pajek files (.net files)
-net_files = read_net_files(OUTPUT, verbosity=False)
+    ## sanity 
+    gc.collect()
 
-##### Part A: Numerical Descriptors of Networks ######
-## extract the data and optionally save the CSV
-df = extract_data_and_save(net_files, "new_Descriptors", save_csv=True)
+    ##### Part B: Numerical Descriptors of Real Network - AIRPORT ######
+    ## get the airport file from memory 
+    print("Initializing the Airport Numerical Description Extraction....\n")
+    airport = net_files['real']['airports_UW.net'][0]
+    ## For the report 
+    airport_to_calculate = [
+                            "PAR",
+                            "LON",
+                            "FRA",
+                            "AMS",
+                            "MOW",
+                            "NYC",
+                            "ATL",
+                            "BCN",
+                            "WAW",
+                            "CHC",
+                            "DJE",
+                            "ADA",
+                            "AGU",
+                            "TBO",
+                            "ZVA",
+                            ]
 
-##### Part B: Numerical Descriptors of Real Network - AIRPORT ######
-## get the airport file from memory 
-airport = net_files['real']['airports_UW.net'][0]
-airport = AirportDescriptor(airport, []) # not passing an airport list now
-## usage 
-## airport.degree --> degrees for all the nodes in the network 
+    ## extract the airport descriptors
+    air_port = extract_airport_descriptors(graph = airport, 
+                                        file_name = "NEW_Airport_Descriptor",
+                                        airport_list=airport_to_calculate,
+                                        save_csv = True)
+    print("The Airport Numerical Descriptors were extracted correctly! \n")
+    
+    ## sanity 
+    gc.collect()
 
+    ### PART C: Histograms and CCDF
 
-### PART C: Histograms and CCDF
-
-
-"""
-networks_graph = []
-name_networks = []
-
-name_networks, networks_graph = extract_read_files(path, output)
-print(len(networks_graph))
-# a) Numerical descriptors of networks
-df = compute_descriptors(name_networks,networks_graph)
-df.to_csv('./results/Descriptors.csv',index=True)
-
-# Airport real networks
-# b) Numerical descriptors of the nodes of the network real/airports_UW.net
-df2 = real_networks_airports(name_networks,networks_graph)
-
-# c) Plot the histograms of the degree distributions (PDF, probability distribution function) and the complementary cumulative degree distributions (CCDF) for the following networks:
-
-"""
+if __name__ == "__main__":
+    ## Variable configuration
+    ## Path to the zip file 
+    ZIP_PATH = './A1-networks.zip'
+    ## extracted directory
+    OUTPUT = './A1-networks/'    
+    main(ZIP_PATH, OUTPUT)
