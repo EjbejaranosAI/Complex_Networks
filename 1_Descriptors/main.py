@@ -5,6 +5,7 @@
 from utils.utils import extract_zip, read_net_files
 from utils.utils import extract_data_and_save
 from utils.utils import extract_airport_descriptors
+from utils.utils import make_histograms_pdf
 import gc 
 
 def main(ZIP_PATH:str, OUTPUT:str) -> None: 
@@ -61,6 +62,7 @@ def main(ZIP_PATH:str, OUTPUT:str) -> None:
     gc.collect()
 
     ### PART C: Histograms and CCDF
+    make_histograms_pdf(bins=15)
 
 if __name__ == "__main__":
     ## Variable configuration
