@@ -12,11 +12,12 @@ import igraph as ig
 import matplotlib.pyplot as plt
 # dataframe & linalg
 import pandas as pd
-import pickle
+#import pickle
 import numpy as np
 import gc 
 # 
 from utils.numerical_descriptors import NumericalNetworkDescriptor
+from utils.airport_descriptors import AirportDescriptor
 
 # plotting parameters 
 plt.rcParams.update({"font.size": 25})
@@ -84,6 +85,23 @@ def extract_data_and_save(model_dictionary:dict, output_name:str, save_csv:bool=
     if save_csv:
         df.to_csv(f"./results/{output_name}.csv")
     return df
+
+
+## 
+def extract_airport_descriptors(graph:igraph.Graph, file_name:str,airport_list:list, rounding_value:int=8,save_csv=True) -> None:
+    """Extracts the Descriptors for the specified graph -> Airport in this case"""
+    ## pass it through our AirportDescriptor class 
+    air_port = AirportDescriptor(graph)
+    ## Rounding datframe to 8 decimals 
+    df = pd.DataFrame(air_port._summary())
+    df = df.round(rounding_value)
+    if save_csv: 
+        df.to_csv(f"./results/{file_name}.csv")
+    if airport_list is not None: 
+        df_report = df.loc[df['Airport'].isin(airport_list)]
+        df_report = df_report.round(rounding_value)
+        df_report.to_csv("./results/{file_name}_REPORT_15_AIRPORTS.csv")
+    return air_port
 
 ##
 def real_networks_airports(name, networks):
@@ -206,17 +224,6 @@ def real_networks_airports(name, networks):
 
     # ver_network(graph_networks)
 
-def load_pickle(file:str) -> np.array:
-    """"""
-    ## context manager 
-    with open(file, "rb") as open_file:
-        data = pickle.load(open_file)
-    ## load to df 
-    df = pd.DataFrame(data).T.reset_index()
-    df = df.rename(columns={"index":"Airport"})
-    ## return the mean, max length 
-    return df['avg_len'].values, df['max_len'].values
-
 def ver_network(graph):
 
     """
@@ -259,10 +266,9 @@ def ver_network(graph):
         vertex_label=["f", "s", "t", "f"],
         edge_width=[1, 5],
         edge_color=["black", "grey"],
-        edge_curve=True,)
-
-
+        edge_curve=True,
+    )
 def histogram_degree_distribution(graph):
     sns.set()
     degrees = pd.DataFrame(graph.degree(),columns=['Node','Degree'])
-    sns.distplot(a=degrees['Degree'],kde=False)     
+    sns.distplot(a=degrees['Degree'],kde=False)  

@@ -1,6 +1,20 @@
 import igraph 
 import pandas as pd
-from utils.utils import load_pickle
+import pickle
+import numpy as np
+
+def load_pickle(file:str) -> np.array:
+    """"""
+    ## context manager 
+    with open(file, "rb") as open_file:
+        data = pickle.load(open_file)
+    ## load to df 
+    df = pd.DataFrame(data).T.reset_index()
+    df = df.rename(columns={"index":"Airport"})
+    ## return the mean, max length 
+    return df['avg_len'].values, df['max_len'].values
+
+
 class AirportDescriptor:
     """
     Calculates Descriptors for a given graph 
