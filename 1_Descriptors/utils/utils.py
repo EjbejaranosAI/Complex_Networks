@@ -265,4 +265,4 @@ def ver_network(graph):
 def histogram_degree_distribution(graph):
     sns.set()
     degrees = pd.DataFrame(graph.degree(),columns=['Node','Degree'])
-    sns.distplot(a=degrees['Degree'],kde=False)
+    sns.distplot(a=degrees['Degree'],kde=False)     
