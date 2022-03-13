@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 # dataframe & linalg
 import pandas as pd
 import numpy as np
+import gc 
+# 
+from utils.numerical_descriptors import NumericalNetworkDescriptor
 
 # plotting parameters 
 plt.rcParams.update({"font.size": 25})
@@ -59,6 +62,26 @@ def read_net_files(dir_path:os.path, verbosity:bool =True) -> DefaultDict[str, D
             print(f"-->{k.upper()}<-- Dataset contains {len(v)} files / graphs")
     return data_dict
     
+###
+def make_dataframe(model_dictionary:dict, output_name:str) -> None:
+    """writes data from model dictionary to csv"""
+    holder = []
+
+    # iterate through dictionary 
+    for k, v in model_dictionary.items():
+        ## get the models 
+        for models in v: 
+            ## define the data 
+            data = NumericalNetworkDescriptor(dataset=k,
+                                            file_name=models,
+                                            loaded_graph=model_dictionary[k][models])
+            holder.append(data._summary())
+            gc.collect()
+    # data frame 
+    df = pd.DataFrame(holder)
+    ## save 
+    df.to_csv(f"./results/{output_name}.csv")
+    return df
     
     
 """

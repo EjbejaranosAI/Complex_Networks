@@ -1,4 +1,3 @@
-import os
 import numpy as np 
 import igraph 
 
@@ -7,8 +6,11 @@ class NumericalNetworkDescriptor:
     
     PARAMETERS:
     -----------
+    dataset : name of the dataset 
+    file_name : name of the model 
+    loaded_model : igraph model loaded in memory 
     
-    
+
     
     RETURNS:
     --------
@@ -27,7 +29,7 @@ class NumericalNetworkDescriptor:
         # number of vertices 
         self.vertices = self.graph.vcount()
         # density 
-        self.density = round(self.graph.density(), self.decimals) 
+        #self.density = round(self.graph.density(), self.decimals) 
         # average path length 
         self._avg_path_len = round(self.graph.average_path_length(), self.decimals)
         # average degree
@@ -47,16 +49,15 @@ class NumericalNetworkDescriptor:
         graph_data_summary = {
                 "File_Name":self.file_name,
                 "Folder": self.dataset,
-                "Edges":self.edges(),
-                "Nodes":self.vertices(),
-                "Density":self.density(),
-                "Avg. Path Length":self._avg_path_len(),
-                "Assortativity":self.assortativity(),
-                "Diameter":self.diameter(),
+                "Edges":self.edges,
+                "Nodes":self.vertices,
+                "Avg. Path Length":self._avg_path_len,
+                "Assortativity":self.assortativity,
+                "Diameter":self.diameter,
                 "Transitivity_cluster_coefficient": self.avg_transitivity,
-                "Min. Degree":self.min_degree(),
-                "Avg. Degree":self.average_degree(),
-                "Max. Degree":self.max_degree(),
+                "Min. Degree":self.min_degree,
+                "Avg. Degree":self.average_degree,
+                "Max. Degree":self.max_degree,
             }
         return graph_data_summary
     
