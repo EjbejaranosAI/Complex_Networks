@@ -12,6 +12,7 @@ import igraph as ig
 import matplotlib.pyplot as plt
 # dataframe & linalg
 import pandas as pd
+import pickle
 import numpy as np
 import gc 
 # 
@@ -205,6 +206,16 @@ def real_networks_airports(name, networks):
 
     # ver_network(graph_networks)
 
+def load_pickle(file:str) -> np.array:
+    """"""
+    ## context manager 
+    with open(file, "rb") as open_file:
+        data = pickle.load(open_file)
+    ## load to df 
+    df = pd.DataFrame(data).T.reset_index()
+    df = df.rename(columns={"index":"Airport"})
+    ## return the mean, max length 
+    return df['avg_len'].values, df['max_len'].values
 
 def ver_network(graph):
 
