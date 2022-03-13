@@ -10,6 +10,7 @@ import igraph
 import igraph as ig
 # plotting 
 import matplotlib.pyplot as plt
+import seaborn as sns
 # dataframe & linalg
 import pandas as pd
 #import pickle
