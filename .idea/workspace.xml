@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c97df242-0ad1-4ae8-9977-25e0b0847cb5" name="Changes" comment="Starting with the second task - Computing descriptors for the real networks -&gt; Airports in 80% of the second task">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1_Descriptors/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/1_Descriptors/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/1_Descriptors/results/Airports_Descriptors.csv" beforeDir="false" afterPath="$PROJECT_DIR$/1_Descriptors/results/Airports_Descriptors.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1_Descriptors/utils/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/1_Descriptors/utils/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -275,7 +275,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647112741984</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Starting with the second task - Computing descriptors for the real networks -&gt; Airports in 80% of the second task">
+      <created>1647113785970</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1647113785970</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
