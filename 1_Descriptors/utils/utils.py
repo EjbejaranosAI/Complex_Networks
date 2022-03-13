@@ -268,7 +268,7 @@ def ver_network(graph):
         edge_color=["black", "grey"],
         edge_curve=True,
     )
-
-
-if __name__ == "__main__":
-    print("Yes")
+def histogram_degree_distribution(graph):
+    sns.set()
+    degrees = pd.DataFrame(graph.degree(),columns=['Node','Degree'])
+    sns.distplot(a=degrees['Degree'],kde=False)  
