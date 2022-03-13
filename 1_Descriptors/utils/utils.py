@@ -21,7 +21,7 @@ from utils.numerical_descriptors import NumericalNetworkDescriptor
 from utils.airport_descriptors import AirportDescriptor
 
 # plotting parameters 
-plt.rcParams.update({"font.size": 25})
+#plt.rcParams.update({"font.size": 25})
 
 def extract_zip(data_dir:os.path, output_dir:os.path) -> None:
     """Extracts zip-files to current working directory"""
@@ -177,3 +177,41 @@ def make_histograms_pdf(bins:int):
         plot_ccdf(graph_bins=v,
                 number_bins=20,
                 graph_name=k)
+        
+"""
+Maybe increase efficiency with multithreading ?
+
+Yes multithreading pool can work !!
+
+"""
+def get_average_max_len(graph:igraph.Graph, node:int) -> float:
+    """ gets all the paths and gets averag and max"""
+    ## all the path lengths
+    path_len = [len(p) for p in graph.get_all_shortest_paths(v=node)]
+    ## average path 
+    avg_path = round(np.mean(path_len), 8)
+    ## max 
+    max_path = round(np.max(path_len), 8)
+    
+    return avg_path, max_path 
+
+
+from collections import defaultdict
+import gc 
+from tqdm import tqdm
+
+def extract_avg_max_len(graph: igraph.Graph) -> dict:
+    """Function which iterates over the graph and extracts the avg and max length for each node."""
+    d = dict()
+    for _, node in enumerate(tqdm(graph.vs())):
+        ## id of the node 
+        node_id,node_name = node['id'], node['name']
+        #print(node_name)
+        ## get the distance 
+        avg_len, max_len = get_average_max_len(graph, node=node_id)
+        d[node_name] = {
+                        "avg_len": avg_len,
+                        "max_len": max_len
+                        }
+        gc.collect()
+    return d
