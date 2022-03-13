@@ -63,7 +63,7 @@ def read_net_files(dir_path:os.path, verbosity:bool =True) -> DefaultDict[str, D
     return data_dict
     
 ###
-def make_dataframe(model_dictionary:dict, output_name:str) -> None:
+def extract_data_and_save(model_dictionary:dict, output_name:str, save_csv:bool=True) -> None:
     """writes data from model dictionary to csv"""
     holder = []
 
@@ -80,120 +80,11 @@ def make_dataframe(model_dictionary:dict, output_name:str) -> None:
     # data frame 
     df = pd.DataFrame(holder)
     ## save 
-    df.to_csv(f"./results/{output_name}.csv")
+    if save_csv:
+        df.to_csv(f"./results/{output_name}.csv")
     return df
-    
-    
-"""
 
-Replaced with the two functions above: 
-
-- extract_zip 
-
-- read_net_files 
-
-Reasoning to make two functions: 
-    1. Coupling is bad -> a function should serve one single purpose 
-    2. read_net_files -> returns a dictionary, faster  
-
-def read_data(dir_path:os.path, verbosity:bool = True):
-    "
-
-    This function read the path and deliver lists, one of them, with the name of the kind of model graph names
-    and the other with the graphs.
-
-    PARAMS:
-    ------
-    dir_path : Path of folder with data 
-    
-    RETURNS:
-    --------
-    data_networks : List[igraph.graph]
-
-
-    "
-    ## list files in directory 
-    name_networks = os.listdir(dir_path)
-    
-    ## some feedback
-    
-    root_networks = glob.glob(dir_path + "/*.net")
-    data_networks = []
-    for i in range(len(root_networks)):
-        data_networks.append(igraph.read(root_networks[i]))
-        print(name_networks[i])
-    return data_networks, name_networks
-"""
-
-def compute_descriptors(name, graphs):
-    """
-    This function takes the name and graphs models and calculates the descriptors, then stores them in a csv file
-    :param name:    Neural network type name
-
-    :param graphs:  Neural network file graphs
-
-    :return:        Number of nodes
-                    Number of edges
-                    Minimum, maximum, and average degree
-                    Average clustering coefficient (average of the clustering coefficient of each node)
-                    Assortativity
-                    Average path length (average distance between all pairs of nodes)
-                    Diameter (maximum distance between nodes in the network)
-    """
-
-    descriptors = []
-    number_files = len(graphs)
-    for i in range(number_files):
-        number_models = len(graphs[i])
-
-        for j in range(number_models):
-            Model_name = name[i][j]
-            nodes = graphs[i][j].vcount()
-            edges = graphs[i][j].ecount()
-            average_degree = "{:.4f}".format(
-                float(edges / nodes)
-            )  # Total Edges/Total Nodes=Average Degree
-            max_degree = graphs[i][j].maxdegree()
-            min_degree = min(graphs[i][j].degree())
-            avg_clustering_cf = "{:.4f}".format(
-                float(graphs[i][j].transitivity_undirected())
-            )
-            assortat = "{:.4f}".format(float(graphs[i][j].assortativity_degree()))
-            avg_path_length = "{:.4f}".format(
-                float(np.mean(graphs[i][j].shortest_paths()))
-            )
-            diameter = graphs[i][j].diameter()
-            descriptors.append(
-                [
-                    Model_name,
-                    nodes,
-                    edges,
-                    average_degree,
-                    max_degree,
-                    min_degree,
-                    avg_clustering_cf,
-                    assortat,
-                    avg_path_length,
-                    diameter,
-                ]
-            )
-    descriptors = pd.DataFrame(descriptors)
-    descriptors.columns = [
-        "Model",
-        "Nodes",
-        "Edges",
-        "Average_degree",
-        "Max_degree",
-        "Min_degree",
-        "Average_clustering_coefficient",
-        "Assortativity",
-        "Average_path_length",
-        "Diameter",
-    ]
-    print(descriptors)
-    return descriptors
-
-
+##
 def real_networks_airports(name, networks):
     """
 
@@ -239,11 +130,30 @@ def real_networks_airports(name, networks):
     degree = graph_networks.degree(airports)
     """2.Strength*"""
     strength = graph_networks.strength(airports)
-    """3.Clustering coefficient - NO SE SI ESTA BIEN"""
+    """3.Clustering coefficient - NO SE SI ESTA BIEN
+    
+    Pienso que se tiene que hacer asi:
+    1. Para cada vertize / nodo (el aeropuerto):
+        1.1 Calcular el transitivity 
+        1.2 promedio del transitivity
+    2. Adjuntar a su valor correspondiente
+    
+    ## python code:
+    trans_per_vertex = [round(g.transitivity_local_undirected(vertices=v['id']),4) for v in g.vs()]
+    average_transitivty = round(np.mean(trans_per_vertex), 4)
+
+    
+    usando igraph.Graph.transitivity_avglocal_undirected
+    
+    """
+    
     clustering = graph_networks.transitivity_undirected()
     print("El clustering pero en general, toca arreglar esto")
     print(clustering)
+    
 
+    ## esto esta mal tambien, igual que en la primera parte 
+    ## se cambiaria 
     for i in range(len(airports)):
         """4.Average path length (average distance to the rest of the nodes)*"""
         Average_path_length.append(
