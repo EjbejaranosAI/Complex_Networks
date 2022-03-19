@@ -7,7 +7,6 @@ from utils.utils import extract_data_and_save
 from utils.utils import extract_airport_descriptors
 from utils.utils import make_histograms_pdf
 import gc 
-
 def main(ZIP_PATH:str, OUTPUT:str) -> None: 
     """Main function to run the functions"""
     ## Extract the zipfile, if the output dir exists it will skip

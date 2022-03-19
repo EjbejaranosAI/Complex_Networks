@@ -16,7 +16,9 @@ import pandas as pd
 #import pickle
 import numpy as np
 import gc 
-# 
+# progress bar 
+from tqdm import tqdm
+## utils 
 from utils.numerical_descriptors import NumericalNetworkDescriptor
 from utils.airport_descriptors import AirportDescriptor
 
@@ -196,9 +198,7 @@ def get_average_max_len(graph:igraph.Graph, node:int) -> float:
     return avg_path, max_path 
 
 
-from collections import defaultdict
-import gc 
-from tqdm import tqdm
+
 
 def extract_avg_max_len(graph: igraph.Graph) -> dict:
     """Function which iterates over the graph and extracts the avg and max length for each node."""
