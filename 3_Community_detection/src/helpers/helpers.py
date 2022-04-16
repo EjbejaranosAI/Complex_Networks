@@ -1,4 +1,5 @@
 import glob
+import networkx as nx 
 
 ## define the function to load the files
 def get_net_files(dir_to_files: str) -> list:
@@ -89,3 +90,13 @@ def dict_vals_to_list(d: dict) -> list:
     Convert a dictionary to a list of values
     """
     return list(d.values())
+
+def load_graph_coords(graph: nx.Graph) -> tuple:
+    net = nx.read_pajek(graph)
+    try:
+        coord_x = net.vs['x']
+        coord_y = net.vs['y']
+        pos = [(coord_x[i], coord_y[i]) for i in range(len(coord_x))]
+    except:
+        pos=nx.kamada_kawai_layout(net)
+    return (net, pos)
