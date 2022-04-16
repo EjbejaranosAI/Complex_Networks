@@ -1,7 +1,6 @@
 ## define a class to hold all the community algorithms
 import networkx as nx
 from .helpers import lol2idx
-from typing import Optional
 
 
 class NetworkXCommunityAlgs:
@@ -78,8 +77,7 @@ class NetworkXCommunityAlgs:
         return communities, nc
         
         
-        
-        
+
     @staticmethod
     def _get_mapper(graph: nx.Graph) -> dict:
         """
