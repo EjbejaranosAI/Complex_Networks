@@ -37,7 +37,6 @@ def get_file_dict(data_directory: str) -> dict:
     ]
     ## import collections defaultdict
     from collections import defaultdict
-
     net_clu_dict = defaultdict(list)
     _ = [
         net_clu_dict[x[0].split("/")[2].upper()].append(net_clu_pairs[idx])
