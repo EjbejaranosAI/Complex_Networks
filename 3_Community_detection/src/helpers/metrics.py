@@ -1,6 +1,7 @@
+
 ## will hold the collection of metrics 
 import numpy as np
-
+import networkx as nx 
 ## Normalized Mutual Information (NMI)
 def nmi(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
@@ -28,6 +29,19 @@ def nvi_from_nmi(y_true: np.ndarray, y_pred: np.ndarray, vertices:int) -> float:
     from sklearn.metrics import normalized_mutual_info_score
     return normalized_mutual_info_score(y_true, y_pred) / np.log(vertices)
 
-## Normalized Variation of Information from networkX 
-def nvi_nx(community1, community2,):
+## Normalized Variation of Information 
+def nvi(community1, community2,):
+    """Implement the Normalized Variation of Information from igraph.
+    Which uses the community and variation of information between two clusters.
+    
+    Variation of information is defined as the difference between the entropy of the two clusters
+    and the entropy of the joint distribution.
+    """
     pass
+## define the function to calculate the entropy of two clusters
+
+def modularity(g:nx.Graph, community:list) -> float:
+    """Calculate the modularity of a graph given a community."""
+    import networkx.algorithms.community as nx_comm
+    ## calculate the modularity
+    return nx_comm.modularity(g, community)
