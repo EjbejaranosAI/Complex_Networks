@@ -1,12 +1,13 @@
 ## define a class to hold all the community algorithms 
 import networkx as nx 
-
+from .helpers import lol2idx
 
 class CommunityAlgs:
-    def __init__(self, graph:nx.Graph, method:str):
+    def __init__(self, graph:nx.Graph, method:str, verbosity:bool=False) -> None:
         self.graph = graph
         self.method = method
         self.mapper = self._get_mapper(self.graph)
+        self.verbosity = verbosity
         self.algorithm = self._get_algorithm(self.graph, self.method) 
     
     ## define a function for the Girvan-Newman algorithm
@@ -16,7 +17,6 @@ class CommunityAlgs:
         """
         ## import community module
         from networkx.algorithms.community.centrality import girvan_newman
-        from helpers import lol2idx
         ## get the communities
         communities = list(girvan_newman(graph))
         num_coms = len(communities)
@@ -27,6 +27,20 @@ class CommunityAlgs:
         node_colors = [lol2idx(comms) for comms in communities]
         ## return the communities
         return (communities,node_colors)
+    
+    ## define the function for the asyn_fluid algorithm
+    def _asyn_fluid(self, graph:nx.Graph, _k:int=5, _max_iter:int=100) -> list:
+        """
+        Calculate the communities using the asyn_fluid algorithm.
+        """
+        from networkx.algorithms.community import asyn_fluid
+        ## assign fluids 
+        fluids = asyn_fluid.asyn_fluidc(G=graph, k=_k, max_iter=_max_iter)
+        ## get the communities
+        communities = [fluid for fluid in fluids]
+        ## get the node colors
+        nc = lol2idx(communities)
+        return communities, nc
         
     ## define the function for getting the algorithm 
     def _get_algorithm(self, graph:nx.Graph, method:str) -> list:
@@ -35,13 +49,9 @@ class CommunityAlgs:
         """
         ## get the communities
         if method == "girvan_newman":
-            return self._girvan_newman(graph, verbosity=False)
-        if method == 'fastgreedy':
-            return self._fastgreedy(graph, verbosity=False)
-        if method == 'label_propagation':
-            return self._label_propagation(graph, verbosity=False)
-        if method == 'walktrap':
-            return self._walktrap(graph, verbosity=False)
+            return self._girvan_newman(graph, verbosity=self.verbosity)
+        if method == "asyn_fluid":
+            return self._asyn_fluid(graph)
         else:
             raise ValueError(f"Method {method} is not supported.")
     

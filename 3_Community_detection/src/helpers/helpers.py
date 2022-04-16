@@ -65,3 +65,9 @@ def lol2idx(lol:list) -> list:
     d = dict()
     _ = [d.setdefault(val,idx) for idx, sublist in enumerate(lol) for val in sublist]
     return d
+
+def dict_vals_to_list(d:dict) -> list:
+    """
+    Convert a dictionary to a list of values
+    """
+    return list(d.values())
