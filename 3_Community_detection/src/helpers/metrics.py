@@ -32,7 +32,6 @@ def rand_index(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def nvi_from_nmi(y_true: np.ndarray, y_pred: np.ndarray, vertices: int) -> float:
     """Calculate the normalized variation of information between two lists."""
     from sklearn.metrics import normalized_mutual_info_score
-
     return normalized_mutual_info_score(y_true, y_pred) / np.log(vertices)
 
 

@@ -91,8 +91,8 @@ def dict_vals_to_list(d: dict) -> list:
     """
     return list(d.values())
 
-def load_graph_coords(graph: nx.Graph) -> tuple:
-    net = nx.read_pajek(graph)
+def load_graph_coords(file_path:str) -> tuple:
+    net = nx.read_pajek(file_path)
     try:
         coord_x = net.vs['x']
         coord_y = net.vs['y']
