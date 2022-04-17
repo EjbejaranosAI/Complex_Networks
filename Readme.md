@@ -1,6 +1,5 @@
 # COMPLEX NETWORKS (CN) UPC- URV MAI
-![This is an image](./airports.png.svg)
-
+![This is an image](https://myoctocat.com/assets/images/base-octocat.svg)
 
 ## Sources
 This repository and all the projects are inspired by the complex networks subject for the Master's degree in artificial intelligence at the URV

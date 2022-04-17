@@ -2,6 +2,32 @@
 import numpy as np
 import networkx as nx
 
+
+
+def compute_metrics(l1,l2):
+    ## normalized mutual information
+    _nmi = nmi(l1,l2)
+    ## jaccard index 
+    jac_idx = jaccard_index(l1,l2)
+    ## randindex 
+    rand_id = rand_index(l1,l2)
+    ## nvi = normalized variation of information
+    _nvi = nvi_from_nmi(l1,l2,len(l1))
+
+    ## feedback 
+    print(f"NMI: {_nmi:.2f}")
+    print(f"Jaccard index: {jac_idx:.2f}")
+    print(f"Rand index: {rand_id:.2f}")
+    print(f"NVI: {_nvi:.2f}")
+    tracker_metrics = {'nmi':_nmi,
+                    'jaccard_index':jac_idx,
+                    'rand_index':rand_id,
+                    'nvi':_nvi}
+
+    return tracker_metrics
+
+
+
 ## Normalized Mutual Information (NMI)
 def nmi(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
