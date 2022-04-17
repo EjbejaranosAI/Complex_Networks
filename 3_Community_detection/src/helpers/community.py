@@ -181,20 +181,50 @@ class IgraphCommunityAlgs:
     # 2.fast_gredy algorithm
  
     def _fast_greedy(self, graph):
-        communities_fastgreedy = graph.community_fastgreedy()
-        communities_fastgreedy  = communities_fastgreedy.as_clustering()
+        # Use edge betweenness to detect communities
+        communities = graph.community_fastgreedy()
+        # ... and convert into a VertexClustering for plotting
+        communities = communities.as_clustering()
 
-        print(communities_fastgreedy)
         # Color each vertex and edge based on its community membership
-        num_communities = len(communities_fastgreedy)
+        num_communities = len(communities)
         palette = ig.RainbowPalette(n=num_communities)
-        for i, community in enumerate(communities_fastgreedy):
+        for i, community in enumerate(communities):
             graph.vs[community]["color"] = i
             community_edges = graph.es.select(_within=community)
             community_edges["color"] = i
 
-        #fig = draw_graph_communities(communities_fastgreedy, palette, num_communities)
-        return (communities_fastgreedy, palette)
+
+            # FUNCTION TO DRAW COMMUNITIES    
+        
+        # Plot with only vertex and edge coloring
+        fig, ax = plt.subplots()
+        ig.plot(
+            communities,
+            palette=palette,
+            edge_width=1,
+            target=ax,
+            vertex_size=13,
+        )
+        legend_handles = []
+        for i in range(num_communities):
+            handle = ax.scatter(
+                [], [],
+                s=100,
+                facecolor=palette.get(i),
+                edgecolor="k",
+                label=i,
+            )
+            legend_handles.append(handle)
+
+        ax.legend(
+            handles=legend_handles,
+            title='Community:',
+            bbox_to_anchor=(0, 0),
+            bbox_transform=ax.transAxes,
+        )
+        plt.show()
+        return (communities, palette, num_communities,fig)
 
 
     # 3. Label propagation algorithm
