@@ -1,4 +1,4 @@
-# COMPLEX NETWORKS
+# COMPLEX NETWORKS (CN) UPC- URV MAI
 
 ## Sources
 This repository and all the projects are inspired by the complex networks subject for the Master's degree in artificial intelligence at the URV
@@ -9,28 +9,24 @@ This repository contain all the basic concepts about Complex networks, and it is
 
 ## Technologies
 Project is created with:
-* Lorem version: 12.3
-* Ipsum version: 2.33
-* Ament library version: 999
+* Python: 3.9
+* Igraph: 0.9.10
+* Networkx version: 2.7.1
 
 
 
 ### Launch
 ## Table of contents
-* [General info](#general-info)
-* [Technologies](#technologies)
-* [Setup](#setup)
+* [Descriptors](#1_Descriptors)
+* [Complex models generators](#technologies)
+* [Community detection](#setup)
 
 
 
 
 
 ## Setup
-To run this project, install it locally using npm:
+To run this project, install requirements.txt
 
-```
-$ cd ../lorem
-$ npm install
-$ npm start
 
 
