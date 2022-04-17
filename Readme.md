@@ -1,4 +1,6 @@
 # COMPLEX NETWORKS (CN) UPC- URV MAI
+![This is an image](./airports.png.svg)
+
 
 ## Sources
 This repository and all the projects are inspired by the complex networks subject for the Master's degree in artificial intelligence at the URV
