@@ -3,6 +3,7 @@ import networkx as nx
 from .helpers import lol2idx
 from igraph import Graph
 import igraph as ig
+from matplotlib import pyplot as plt
 
 class NetworkXCommunityAlgs:
     def __init__(
@@ -19,6 +20,7 @@ class NetworkXCommunityAlgs:
         self.layout = layout
         self.params = params
         self.algorithm = self._get_algorithm(self.graph, self.method, self.params)
+        
 
     ## define a function for the Girvan-Newman algorithm
     def _girvan_newman(
@@ -127,13 +129,26 @@ class IgraphCommunityAlgs:
         self.layout = layout
         self.params = params
         self.algorithm = self._get_algorithm(self.graph, self.method)
-    
-    
-
-
-
         
-    def draw_graph_communities(communities,palette, num_communities):
+
+    # 1.Girvan newman algorithm
+    def _girvan_newman(self, graph):
+        # Use edge betweenness to detect communities
+        communities = graph.community_edge_betweenness()
+        # ... and convert into a VertexClustering for plotting
+        communities = communities.as_clustering()
+
+        # Color each vertex and edge based on its community membership
+        num_communities = len(communities)
+        palette = ig.RainbowPalette(n=num_communities)
+        for i, community in enumerate(communities):
+            graph.vs[community]["color"] = i
+            community_edges = graph.es.select(_within=community)
+            community_edges["color"] = i
+
+
+            # FUNCTION TO DRAW COMMUNITIES    
+        
         # Plot with only vertex and edge coloring
         fig, ax = plt.subplots()
         ig.plot(
@@ -157,28 +172,11 @@ class IgraphCommunityAlgs:
         ax.legend(
             handles=legend_handles,
             title='Community:',
-            bbox_to_anchor=(0, 1.0),
+            bbox_to_anchor=(0, 0),
             bbox_transform=ax.transAxes,
         )
-        return fig
-
-    def _girvan_newman(self, graph):
-        # Use edge betweenness to detect communities
-        communities = graph.community_edge_betweenness()
-        # ... and convert into a VertexClustering for plotting
-        communities = communities.as_clustering()
-
-        # Color each vertex and edge based on its community membership
-        num_communities = len(communities)
-        palette = ig.RainbowPalette(n=num_communities)
-        for i, community in enumerate(communities):
-            graph.vs[community]["color"] = i
-            community_edges = graph.es.select(_within=community)
-            community_edges["color"] = i
-
-        #fig = draw_graph_communities(communities, palette, num_communities)
-        
-        return (communities, palette)
+        plt.show()
+        return (communities, palette, num_communities,fig)
 
     ## define the function for getting the algorithm
     def _get_algorithm(self, graph: Graph, method: str) -> list:
