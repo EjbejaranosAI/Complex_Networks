@@ -53,8 +53,8 @@ def read_clu(file_path: str) -> list:
     """
     with open(file_path, "r") as f:
         return [
-            (idx, int(line.strip()))
-            for idx, line in enumerate(f.readlines())
+            int(line.strip())
+            for line in f.readlines()
             if line[0] != "*"
         ]
 
@@ -99,3 +99,32 @@ def load_graph_coords(file_path:str) -> tuple:
     except:
         pos=nx.kamada_kawai_layout(net)
     return (net, pos)
+
+
+def get_coordinates(clu_file):
+    """
+    Get the coordinates of the nodes in the graph
+    """
+    from collections import defaultdict 
+    dd = defaultdict(defaultdict)
+    id_names = ['node_id','abbr','x_coord','y_coord']
+    l = []
+    with open(clu_file, "r") as f: 
+        for idx,line in enumerate(f.readlines()):
+            data = line.strip()
+            ## data is split with ['*Vertices', '3618'] and ['*Edges']
+            if line.startswith("*Vertices"):
+                pass
+            elif line.startswith("*Edges"):
+                break
+            else:
+                ## split the data 
+                data_sp = data.split(" ")
+                ## get the node names
+                node_id, abbr, x_coord, y_coord = int(data_sp[0]), data_sp[1], float(data_sp[2]), float(data_sp[3])
+                dd[node_id]['abbr'] = abbr
+                dd[node_id]['x'] = x_coord
+                dd[node_id]['y'] = y_coord
+                tmp = dict(zip(id_names,data))
+                l.append(tmp)
+    return dd, l

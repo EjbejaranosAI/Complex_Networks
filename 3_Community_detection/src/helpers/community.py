@@ -11,17 +11,15 @@ class NetworkXCommunityAlgs:
         params:dict = {'_k':5,'_max_iter':100},
         verbosity: bool = False,
     ) -> None:
-        self.graph = graph
         self.method = method
-        self.mapper = self._get_mapper(self.graph)
         self.verbosity = verbosity
         self.layout = layout
         self.params = params
-        self.algorithm = self._get_algorithm(self.graph, self.method, self.params)
+        self.algorithm = self._get_algorithm(graph, self.method, self.params)
 
     ## define a function for the Girvan-Newman algorithm
+    @staticmethod
     def _girvan_newman(
-        self,
         graph: nx.Graph,
     ) -> list:
         """
@@ -31,11 +29,13 @@ class NetworkXCommunityAlgs:
         from networkx.algorithms.community.centrality import girvan_newman
 
         ## get the communities
-        communities = list(girvan_newman(graph))
+        communities = girvan_newman(graph)
         ## map the communities to the nodes
         node_colors = [lol2idx(comms) for comms in communities]
+        ## node colors 
+        n_col = list(set([v for c in node_colors for _,v in c.items()]))
         ## return the communities
-        return (communities, node_colors)
+        return (communities, n_col)
 
     ## define the function for the asyn_fluid algorithm
     def _asyn_fluid(self, graph: nx.Graph,params:dict) -> list:
@@ -50,6 +50,7 @@ class NetworkXCommunityAlgs:
         communities = [fluid for fluid in fluids]
         ## get the node colors
         nc = lol2idx(communities)
+        #n_col = list(set([v for c in nc for k,v in c.items()]))
         return communities, nc
 
     ## define function for the Label Propagation algorithm
@@ -63,6 +64,7 @@ class NetworkXCommunityAlgs:
         communities = label_propagation.label_propagation_communities(graph)
         ## get the node colors
         nc = lol2idx(communities)
+        #n_col = list(set([v for c in nc for k,v in c.items()]))
         return communities, nc
     
     ## Clauset-Newman-Moore algorithm (Greedy)
@@ -74,18 +76,8 @@ class NetworkXCommunityAlgs:
         from networkx.algorithms.community import greedy_modularity_communities
         communities = greedy_modularity_communities(graph, n_comm)
         nc = lol2idx(communities)
-        return communities, nc
-        
-        
-
-    @staticmethod
-    def _get_mapper(graph: nx.Graph) -> dict:
-        """
-        Get the mapper from the graph.
-        """
-        ## get the mapper
-        mapper = {name: idx for idx, name in enumerate(graph.nodes())}
-        return mapper
+        #n_col = list(set([v for c in nc for k,v in c.items()]))
+        return communities,nc
 
     ## define the function for getting the algorithm
     def _get_algorithm(self, graph: nx.Graph, method: str,params:dict) -> list:
