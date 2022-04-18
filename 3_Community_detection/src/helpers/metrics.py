@@ -35,39 +35,27 @@ def nvi_from_nmi(y_true: np.ndarray, y_pred: np.ndarray, vertices: int) -> float
     return normalized_mutual_info_score(y_true, y_pred) / np.log(vertices)
 
 
-## Normalized Variation of Information
-def nvi(
-    community1,
-    community2,
-):
-    """Implement the Normalized Variation of Information from igraph.
-    Which uses the community and variation of information between two clusters.
-
-    Variation of information is defined as the difference between the entropy of the two clusters
-    and the entropy of the joint distribution.
-    """
-    pass
-
-
 ## define the function to calculate the entropy of two clusters
 
 
 def modularity(g: nx.Graph, community: list) -> float:
     """Calculate the modularity of a graph given a community."""
     import networkx.algorithms.community as nx_comm
+    
 
     ## calculate the modularity
     return nx_comm.modularity(g, community)
 
 
 
-def calculate_metrics(data:list, community_alg:list):
+def calculate_metrics(graph, data:list, community_alg:list,community_idx:list):
     """Calculate NVI, NMI & Rand Index"""
     import math
     import igraph as ig
     nvi = ig.compare_communities(data, community_alg,method='vi')/math.log(len(data))
     nmi = ig.compare_communities(data, community_alg,method='nmi')
     rand_idx = ig.compare_communities(data, community_alg, method='rand')
+    modularity = graph.modularity(community_idx)
     ## printmetrics rounded to 2 decimal places 
     #print(f"| NVI: {round(nvi,2)} | NMI: {round(nmi,2)} | Rand Index: {round(rand_idx,2)}")
-    return (nvi, nmi, rand_idx)
+    return (nvi, nmi, rand_idx, modularity)
