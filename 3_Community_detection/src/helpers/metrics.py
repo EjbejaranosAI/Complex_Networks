@@ -48,14 +48,15 @@ def modularity(g: nx.Graph, community: list) -> float:
 
 
 
-def calculate_metrics(graph, data:list, community_alg:list,community_idx:list):
+def calculate_metrics(graph, data:list, community_alg:list,community_idx:int,igraph_data:list) -> tuple:
     """Calculate NVI, NMI & Rand Index"""
     import math
     import igraph as ig
     nvi = ig.compare_communities(data, community_alg,method='vi')/math.log(len(data))
     nmi = ig.compare_communities(data, community_alg,method='nmi')
     rand_idx = ig.compare_communities(data, community_alg, method='rand')
-    modularity = graph.modularity(community_idx)
-    ## printmetrics rounded to 2 decimal places 
-    #print(f"| NVI: {round(nvi,2)} | NMI: {round(nmi,2)} | Rand Index: {round(rand_idx,2)}")
-    return (nvi, nmi, rand_idx, modularity)
+    if igraph_data is not None:
+        mod = graph.modularity(igraph_data[community_idx])
+        return (nvi, nmi, rand_idx, mod)
+    else: 
+        return (nvi, nmi, rand_idx)
