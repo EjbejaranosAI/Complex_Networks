@@ -56,5 +56,10 @@ def calculate_metrics(graph, data:list, community_alg:list,community_idx:int) ->
     nvi = ig.compare_communities(data, community_alg,method='vi')/math.log(len(data))
     nmi = ig.compare_communities(data, community_alg,method='nmi')
     rand_idx = ig.compare_communities(data, community_alg, method='rand')
-    modularity = nx_comm.modularity(graph, community_idx)
+    try:
+        modularity = nx_comm.modularity(graph, community_idx)
+    except:
+        g = ig.Graph.from_networkx(graph)
+        g.simplify()
+        modularity = ig.modularity(community_idx)
     return (nvi, nmi, rand_idx,modularity)
