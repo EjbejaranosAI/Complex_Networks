@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+matplotlib = "*"
+numpy = "*"
+igraph = "*"
+numba = "*"
+pybtex = "*"
+ipykernel = "*"
+termcolor = "*"
+leidenalg = "*"
+cairocffi = "*"
+pillow = "*"
+texttable = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
