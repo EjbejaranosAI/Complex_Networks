@@ -7,22 +7,23 @@ import random
 class SIS:
     def __init__(
         self,
+        g: ig.Graph,
         initial_population: int,
         initial_infected_population: float,
         mu: float,
         beta: float,
         n_iter:int,
+        t_trans:int,
         seed: int,
         verbose: bool,
     ):
-        self.N = initial_population
+        self.N = len(g.vs())
         self.P = initial_infected_population
         self.mu = mu
         self.beta = beta
         self.n_iter = n_iter
-        self.t_trans = 100
-        self.start_graph = None
-        self.graph = None
+        self.t_trans = t_trans
+        self.graph = g
         self.layout = None
         self.sis_graph = None
         self.inf_rate = [None] * self.n_iter
@@ -31,24 +32,13 @@ class SIS:
         self.verbose = verbose
     
     
-    def _start_network(self,_type:int) ->ig.Graph:
+    def _start_network(self) ->ig.Graph:
         """
         Initiates the Random Graph with the desired parameters.
         Sets the infected & susceptible nodes in the graph. 
         """
-        if _type == 1:
-            g = ig.Graph.Erdos_Renyi(self.N, p=0.2)
-        elif _type == 2:
-            g = ig.Graph.Erdos_Renyi(self.N, p=0.5)
-        elif _type == 3:
-            g = ig.Graph.Erdos_Renyi(self.N, p=0.8)
-        elif _type == 4:
-            g = ig.Graph.Erdos_Renyi(self.N, p=0.9)
-        elif _type == 5:
-            g = ig.Graph.Erdos_Renyi(self.N, p=0.95)
-        else: print("Invalid Input")
-        
-        layout = g.layout("kk")
+        g = self.graph
+        #g = ig.Graph.Erdos_Renyi(self.N, p=0.2)
         ## Choose a random subset of nodes of size NUM_INFECTED, without replacement
         nodes = np.arange(0,self.N)
         infected_nodes_idx = np.random.choice(nodes, size=int(self.P*self.N), replace=False)
@@ -62,9 +52,6 @@ class SIS:
         ## ~~ Susceptible
         g.vs[susceptible_nodes_idx]["status"] = "S"
         g.vs[susceptible_nodes_idx]["color"] = "green"
-        if self.graph is None:
-            self.graph = g  ## set the graph
-            self.layout = layout ## set the positions
         if self.verbose:
             print(f"Number of Nodes: {self.N} | Initial Infected: {len(self.init_infected)} | Initial Susceptible: {len(susceptible_nodes_idx)}")
         return g
@@ -76,7 +63,7 @@ class SIS:
         """
         infected_neighbors = []
         for node in node_list:
-            neighbors = [x for x in node.neighbors() if x["status"] == "I"]
+            neighbors = np.array([x for x in node.neighbors() if x["status"] == "I"])
             for _ in neighbors:
                 possible_infection = np.random.uniform(0,1)
                 if possible_infection < beta:
@@ -119,7 +106,7 @@ class SIS:
         graph.vs[nodes][attribute] = value
 
     
-    def _run_simulation(self):
+    def _run_simulation(self):#, g:ig.Graph):
         ######################################################## START FEEDBACK #################################################################
         if self.verbose:
             dashes = "+ - - - - - - - - " * 6 + "+"
@@ -147,51 +134,49 @@ class SIS:
         #                                                                                                                                    #
         #                                                                                                                                    #
         ######################################################## START SIS ###################################################################
-        
-        gs = [self._start_network(_type=e) for e in range(1,6)] ## initate the graph
-        for idx,g in enumerate(gs):
-            for i in range(self.n_iter):
-                inf = self._find_by_attribute(g, "status", "I")  ## Infected Nodes ## find the total number of infected nodes
-                sus = self._find_by_attribute(g, "status", "S")  ## Susceptible Nodes ## find the total number of susceptible nodes 
-                ## For each infected node at time step t, we recover it with probability μ: 
-                # we generate a uniform random number between 0.0 and 1.0, 
-                possible_recoveries = np.random.uniform(0,1,len(inf)) ## << This is the probability that a node will recover FOR ALL THE NODES (thats why the len(inf) is used)
+        g = self._start_network() ## initate the graph
+        for i in range(self.n_iter):
+            inf = self._find_by_attribute(g, "status", "I")  ## Infected Nodes ## find the total number of infected nodes
+            sus = self._find_by_attribute(g, "status", "S")  ## Susceptible Nodes ## find the total number of susceptible nodes 
+            ## For each infected node at time step t, we recover it with probability μ: 
+            # we generate a uniform random number between 0.0 and 1.0, 
+            possible_recoveries = np.random.uniform(0,1,len(inf)) ## << This is the probability that a node will recover FOR ALL THE NODES (thats why the len(inf) is used)
 
-                # and if the value is lower than μ 
-                # the state of that node in the next time step t+1 will be susceptible, otherwise it will remain being infected.
-                ## apply array broadcasting to find the nodes that will recover ## possible_recoveries < MU returns True/False
-                ## now if it is True and False, we "mask" the original "infected" array and only keep the True values (i.e. the nodes that will recover)
-                inf2sus = inf[possible_recoveries < self.mu] ## infected to susceptible 
-                inf2sus_idx = np.array([x.index for x in inf2sus]) ## get their index, because the above is a list of ig.Vertex objects
+            # and if the value is lower than μ 
+            # the state of that node in the next time step t+1 will be susceptible, otherwise it will remain being infected.
+            ## apply array broadcasting to find the nodes that will recover ## possible_recoveries < MU returns True/False
+            ## now if it is True and False, we "mask" the original "infected" array and only keep the True values (i.e. the nodes that will recover)
+            inf2sus = inf[possible_recoveries < self.mu] ## infected to susceptible 
+            inf2sus_idx = np.array([x.index for x in inf2sus]) ## get their index, because the above is a list of ig.Vertex objects
 
-                ## susceptible to be infected 
-                sus2inf = self._get_infected_neighbors(sus, self.beta) ## get the infected neighbors of the susceptible nodes ## more detail in the function itself
-                sus2inf_idx = np.array([x.index for x in sus2inf]) ## getting the index 
+            ## susceptible to be infected 
+            sus2inf = self._get_infected_neighbors(sus, self.beta) ## get the infected neighbors of the susceptible nodes ## more detail in the function itself
+            sus2inf_idx = np.array([x.index for x in sus2inf]) ## getting the index 
 
-                ## now we update the nodes
-                ## update the infected nodes: inf2sus: I -> S
-                self._update_nodes(g, inf2sus_idx, "S") ## update the status ## from the infected a small % will become S 
-                ## update the infected nodes: sus2inf: S -> I
-                self._update_nodes(g, sus2inf_idx, "I") ## update the color ## from the Susceptible a larger % will become I 
-                ## get the infection rate 
-                infection_rate = len(self._find_by_attribute(g, "status", "I")) / len(g.vs) ## (INFECTED / TOTAL_NODES)
-                self.inf_rate[i] = infection_rate
+            ## now we update the nodes
+            ## update the infected nodes: inf2sus: I -> S
+            self._update_nodes(g, inf2sus_idx, "S") ## update the status ## from the infected a small % will become S 
+            ## update the infected nodes: sus2inf: S -> I
+            self._update_nodes(g, sus2inf_idx, "I") ## update the color ## from the Susceptible a larger % will become I 
+            ## get the infection rate 
+            infection_rate = len(self._find_by_attribute(g, "status", "I")) / len(g.vs) ## (INFECTED / TOTAL_NODES)
+            self.inf_rate[i] = infection_rate
 
-                ############################################ MORE DETAILED FEEDBACK #############################################################
-                if self.verbose:
-                    ## setting the texts
-                    it_txt = colored(f"{i+1}",attrs=['bold']) ## iteration
-                    inf_txt = colored(f"{len(inf)} ({len(inf)/self.N*100:.2f}%)",'red') ## INFECTED 
-                    sus_txt = colored(f"{len(sus)} ({len(sus)/self.N*100:.2f}%)",'green') ## SUSCEPTIBLE
-                    s2i_txt = colored(f"{len(sus2inf_idx)} ({len(sus2inf_idx)/self.N:.2f}%)","red") ## SUSCEPTIBLE TO INFECTED
-                    i2s_txt = colored(f"{len(inf2sus)} ({len(inf2sus)/self.N:.2f}%)","green") ## INFECTED TO SUSCEPTIBLE
-                    ir_txt = colored(f"{infection_rate:.2f}",'blue') ## INFECTION RATE
-                    ## filling it in 
-                    header_id = f"|{it_txt:^24s} | {inf_txt:^24s} | {sus_txt:^24s} | {s2i_txt:^24s} | {i2s_txt:^24s} | {ir_txt:^24s} |" ## use :^24s to make it centered and 24 chars long
-                    ## print the summary statistics
-                    print(header_id);print(dashes)
-            rho_avg = np.mean(self.inf_rate[-(int(self.n_iter-self.t_trans)):])
-        return rho_avg, idx
+            ############################################ MORE DETAILED FEEDBACK #############################################################
+            if self.verbose:
+                ## setting the texts
+                it_txt = colored(f"{i+1}",attrs=['bold']) ## iteration
+                inf_txt = colored(f"{len(inf)} ({len(inf)/self.N*100:.2f}%)",'red') ## INFECTED 
+                sus_txt = colored(f"{len(sus)} ({len(sus)/self.N*100:.2f}%)",'green') ## SUSCEPTIBLE
+                s2i_txt = colored(f"{len(sus2inf_idx)} ({len(sus2inf_idx)/self.N:.2f}%)","red") ## SUSCEPTIBLE TO INFECTED
+                i2s_txt = colored(f"{len(inf2sus)} ({len(inf2sus)/self.N:.2f}%)","green") ## INFECTED TO SUSCEPTIBLE
+                ir_txt = colored(f"{infection_rate:.2f}",'blue') ## INFECTION RATE
+                ## filling it in 
+                header_id = f"|{it_txt:^24s} | {inf_txt:^24s} | {sus_txt:^24s} | {s2i_txt:^24s} | {i2s_txt:^24s} | {ir_txt:^24s} |" ## use :^24s to make it centered and 24 chars long
+                ## print the summary statistics
+                print(header_id);print(dashes)
+        rho_avg = np.mean(self.inf_rate[-(int(self.n_iter-self.t_trans)):])
+        return rho_avg
 
     ## make the pipeline to run all: _initiate_network, _run_sis
     def _model(self) -> ig.Graph:
